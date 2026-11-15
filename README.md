@@ -3,7 +3,7 @@
 A small floating window for your Mac that shows every Claude Code session you have running as a little bot,
 and lets you answer their permission prompts and questions without hunting for the right tab.
 
-<img src="docs/screenshot.png" alt="Agent Huddle with four sessions, one asking for permission" width="360">
+<img src="docs/huddle.gif" alt="Agent Huddle: four Claude Code sessions as bots, one asks to run a command and gets allowed from the widget" width="360">
 
 - **One bot per session**, in any folder: working, waiting for you, or done.
 - **Allow / Deny from the widget.** The card shows the full command, or the file edit as a red/green diff, plus Claude Code's own "always allow" options.
