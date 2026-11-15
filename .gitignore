@@ -1,0 +1,4 @@
+Agent Huddle.app/
+.build.*/
+test/results/
+.DS_Store

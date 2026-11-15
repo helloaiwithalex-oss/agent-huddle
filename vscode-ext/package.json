@@ -1,0 +1,19 @@
+{
+  "name": "agent-huddle",
+  "displayName": "Agent Huddle helper",
+  "description": "Lets the Agent Huddle desktop widget jump to and close Claude Code sessions in VS Code.",
+  "version": "0.2.0",
+  "publisher": "agent-huddle",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/helloaiwithalex-oss/agent-huddle"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js"
+}
