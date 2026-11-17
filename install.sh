@@ -73,7 +73,7 @@ say "5/5 VS Code helper…"
 CODE="$(command -v code || true)"
 [[ -z "$CODE" && -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]] && CODE="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 if [[ -n "$CODE" ]]; then
-  "$CODE" --install-extension "$HERE/vscode-ext/agent-huddle.vsix" --force >/dev/null 2>&1 && echo "  installed (reload VS Code windows to turn it on)"
+  "$CODE" --install-extension "$HERE/vscode-ext/agent-huddle.vsix" --force >/dev/null 2>&1 && echo "  installed (open a new VS Code window or restart VS Code to turn it on)"
 else
   echo "  skipped: VS Code not found. Jump/close for VS Code tabs needs it; everything else works without."
 fi

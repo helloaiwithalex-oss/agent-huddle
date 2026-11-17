@@ -30,8 +30,8 @@ version for them, the [How it talks](#how-it-talks) section explains how the pie
 
 You need:
 - **Xcode Command Line Tools** (for `swiftc`): `xcode-select --install`
-- **Node.js 18+** (Claude Code's hooks run `hook.js` with it)
-- Claude Code
+- **Node.js 18+** (Claude Code's hooks run `hook.js` with it). No Homebrew needed: the macOS installer from [nodejs.org](https://nodejs.org) works.
+- **Claude Code** ([install guide](https://docs.claude.com/en/docs/claude-code/setup))
 
 ```bash
 git clone https://github.com/helloaiwithalex-oss/agent-huddle.git
@@ -39,16 +39,20 @@ cd agent-huddle
 ./install.sh
 ```
 
+Downloaded the ZIP instead (GitHub's **Code → Download ZIP**)? Double-click it, then in Terminal `cd` into the unzipped folder and run `./install.sh`.
+
 The installer:
 1. builds the app from source and puts it in `~/Applications/Agent Huddle.app`
 2. copies `hook.js` to `~/.agent-huddle/`
-3. adds its hooks to `~/.claude/settings.json`, leaving your other settings as they are (a backup is saved as `settings.json.agent-huddle-backup`; running it again never adds duplicates)
+3. adds its hooks to `~/.claude/settings.json`, leaving your other settings as they are (your original file is saved once as `settings.json.agent-huddle-backup`; running it again never adds duplicates or overwrites that backup)
 4. starts the widget now and at every login
 5. installs the small VS Code helper, if VS Code is installed
 
-Then **start a new Claude Code session** (sessions that were already open don't see new hooks) and a bot appears.
+Then **start a Claude Code session** and a bot appears. Sessions that were already open usually show up too; if one doesn't, restart it.
 
-Updating: `git pull && ./install.sh`. Removing: `./uninstall.sh` (takes out everything above, your other settings stay).
+If the build fails with compiler errors on a Mac that builds other things fine, the Command Line Tools are probably out of date next to a newer macOS SDK. The installer already tries every SDK you have; if none works, update the Command Line Tools in System Settings → Software Update and run `./install.sh` again.
+
+Updating: `git pull && ./install.sh`. Removing: `./uninstall.sh` (takes out everything above, plus the backup and the widget's saved position; your other settings stay).
 
 ## Using it
 
@@ -56,13 +60,13 @@ Updating: `git pull && ./install.sh`. Removing: `./uninstall.sh` (takes out ever
 - **Drag** the window anywhere. The **⌃** in the header shrinks it to a single row. The header's **×** quits the widget until your next login (open it again from `~/Applications`).
 - **↗** brings the session's app to the front (and the exact tab in VS Code).
 - **×** closes the session's tab in VS Code. For Terminal and the desktop app it only removes the bot from the list: other apps can't close their tabs or chats from outside, so close them there and the bot leaves on its own within a few seconds.
-- In auto mode Claude rarely asks, so you'll mostly see cards in the default (ask) mode.
+- **No card?** Cards only appear when Claude would ask you anyway. In auto mode or bypass mode it rarely asks: press **Shift+Tab** in Claude Code to cycle back to the default mode. Read-only commands Claude treats as safe (like `ls` or `echo`) and anything you've "always allowed" don't ask either. Asking for a file edit is an easy way to see one.
 
 ### The VS Code helper
 
 VS Code doesn't let outside apps switch or close its tabs, so a tiny extension (`vscode-ext/`, under 100 lines,
 installed by `install.sh`) does it: the widget drops a request file in `~/.agent-huddle/commands/` and the
-extension carries it out. Reload VS Code windows after installing. Everything else works without it.
+extension carries it out. After installing, open a new VS Code window or restart VS Code (reloading a window closes any Claude chats open in it). Everything else works without it.
 
 ## Privacy and security
 

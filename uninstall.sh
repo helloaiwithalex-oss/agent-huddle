@@ -26,6 +26,8 @@ CODE="$(command -v code || true)"
 if [[ -n "$CODE" ]] && "$CODE" --list-extensions 2>/dev/null | grep -qi "^agent-huddle.agent-huddle$"; then
   "$CODE" --uninstall-extension agent-huddle.agent-huddle >/dev/null 2>&1 && echo "removed the VS Code helper"
 fi
+rm -rf "$HOME/.vscode/extensions"/agent-huddle.agent-huddle-* 2>/dev/null
+defaults delete "$LABEL" 2>/dev/null   # the widget's saved window position
 
 rm -rf "$STATE"
 echo "Agent Huddle is uninstalled."

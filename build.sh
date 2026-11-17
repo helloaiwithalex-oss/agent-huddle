@@ -11,8 +11,23 @@ STAGE="$(mktemp -d "$HERE/.build.XXXXXX")"
 trap 'rm -rf "$STAGE"' EXIT
 APP="$STAGE/Agent Huddle.app"
 mkdir -p "$APP/Contents/MacOS"
-swiftc -O -o "$APP/Contents/MacOS/AgentHuddle" "$HERE/app/main.swift" \
-  -framework Cocoa -framework SwiftUI -framework Network
+build() { swiftc -O -o "$APP/Contents/MacOS/AgentHuddle" "$HERE/app/main.swift" \
+  -framework Cocoa -framework SwiftUI -framework Network "$@"; }
+# Some Macs have a newer macOS SDK than their Swift compiler can read (often left behind by a beta), and
+# then every Swift build fails. If the default build fails, try each installed SDK, newest first.
+if ! build 2>"$STAGE/err.log"; then
+  DEV="$(xcode-select -p)"
+  OK=""
+  for SDK in "$DEV"/SDKs/MacOSX[0-9]*.sdk(NnOn) "$DEV"/Platforms/MacOSX.platform/Developer/SDKs/MacOSX[0-9]*.sdk(NnOn); do
+    if build -sdk "$SDK" 2>/dev/null; then echo "built with $SDK (the default SDK didn't work with this Swift)"; OK=1; break; fi
+  done
+  if [[ -z "$OK" ]]; then
+    cat "$STAGE/err.log" >&2
+    echo "error: Swift couldn't build the app with any installed macOS SDK. Updating the Command Line Tools usually fixes it:" >&2
+    echo "  softwareupdate --list   (then install the Command Line Tools update), or: sudo rm -rf $DEV && xcode-select --install" >&2
+    exit 1
+  fi
+fi
 # App icon (the blue blob): drawn by icon/make-icon.swift, turned into an .icns once
 if [[ ! -f "$HERE/icon/AppIcon.icns" ]]; then
   [[ -f "$HERE/icon/AppIcon.png" ]] || swift "$HERE/icon/make-icon.swift" "$HERE/icon/AppIcon.png"

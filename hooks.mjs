@@ -3,7 +3,8 @@
 //   node hooks.mjs add "<node binary>"   (install.sh)
 //   node hooks.mjs remove                (uninstall.sh)
 // Our entries are the ones whose command runs .agent-huddle/hook.js, so running it twice never duplicates them.
-// A copy of the file is saved next to it before every change.
+// Before the first install, a copy of your original file is saved as settings.json.agent-huddle-backup
+// (never overwritten by a reinstall); uninstall deletes it once the hooks are out.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -66,12 +67,16 @@ if (mode === "add") {
 if (Object.keys(hooks).length) settings.hooks = hooks; else delete settings.hooks;
 
 fs.mkdirSync(path.dirname(FILE), { recursive: true });
-if (raw) fs.writeFileSync(`${FILE}.agent-huddle-backup`, raw);
+const BACKUP = `${FILE}.agent-huddle-backup`;
+// Back up only a file that has none of our hooks yet, so the backup always holds your settings from before Agent Huddle.
+if (mode === "add" && raw && removed === 0) fs.writeFileSync(BACKUP, raw);
 const tmp = `${FILE}.agent-huddle-tmp`;
 const fileMode = raw ? fs.statSync(FILE).mode & 0o777 : 0o600;  // keep the file's own permissions
 fs.writeFileSync(tmp, JSON.stringify(settings, null, 2) + "\n", { mode: fileMode });
 fs.chmodSync(tmp, fileMode);
 fs.renameSync(tmp, FILE);
+// After uninstall the backup is out of date (and restoring an old one with our hooks would point at a deleted hook.js).
+if (mode === "remove") fs.rmSync(BACKUP, { force: true });
 console.log(mode === "add"
   ? `added Agent Huddle hooks to ${FILE} (${EVENTS.length} events)`
   : `removed ${removed} Agent Huddle hook entr${removed === 1 ? "y" : "ies"} from ${FILE}`);
